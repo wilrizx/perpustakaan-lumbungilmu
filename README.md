@@ -1,4 +1,4 @@
-# Literasiku (Sistem Manajemen Perpustakaan Digital)
+# Lumbung Ilmu (Sistem Manajemen Perpustakaan Digital)
 
 Sistem manajemen perpustakaan modern yang kaya fitur, dibangun dengan Laravel dan Filament. Aplikasi ini menyediakan alat komprehensif untuk mengelola siswa, buku, pelacakan kehadiran, dan operasi perpustakaan dengan antarmuka admin yang indah dan portal siswa.
 
