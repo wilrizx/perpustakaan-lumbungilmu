@@ -23,11 +23,6 @@ class LatestBooks extends BaseWidget
                     ->limit(3)
             )
             ->columns([
-                // ImageColumn::make('cover_image_url')
-                //     ->label('Cover')
-                //     ->circular()
-                //     ->size(50)
-                //     ->defaultImageUrl(asset('images/default-book-cover.svg')),
                 TextColumn::make('title')
                     ->label('Judul')
                     ->limit(30)

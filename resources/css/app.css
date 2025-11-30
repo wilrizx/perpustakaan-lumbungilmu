@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 /* Required by all components */
 @import '../../vendor/filament/support/resources/css/index.css';
 

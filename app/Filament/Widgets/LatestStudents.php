@@ -23,11 +23,6 @@ class LatestStudents extends BaseWidget
                     ->limit(3)
             )
             ->columns([
-                // ImageColumn::make('photo_url')
-                //     ->label('Foto')
-                //     ->circular()
-                //     ->size(32)
-                //     ->defaultImageUrl(asset('images/default-student-avatar.svg')),
                 TextColumn::make('name')
                     ->label('Nama')
                     ->limit(15)
