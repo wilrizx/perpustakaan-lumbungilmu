@@ -64,7 +64,7 @@ Sistem manajemen perpustakaan modern yang kaya fitur, dibangun dengan Laravel da
 ### 1. Clone Repository
 ```bash
 git clone <url-repository>
-cd Literasiku
+cd Lumbung-ilmu
 ```
 
 ### 2. Install Dependencies
