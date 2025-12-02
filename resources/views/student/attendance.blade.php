@@ -19,7 +19,7 @@
 
     <!-- Main Form Card -->
     <div class="bg-white rounded-3xl shadow-xl p-8 card-hover">
-        <form method="POST" action="{{ route('attendance') }}" class="space-y-8">
+        <form method="POST" action="{{ route('attendance') }}" class="space-y-8" id="attendance-form">
             @csrf
             
             <div class="space-y-4">
@@ -35,28 +35,64 @@
                            name="name" 
                            id="name" 
                            value="{{ old('name') }}"
-                           class="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl text-lg focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
+                           class="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl text-lg focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300"
                            placeholder="Ketik minimal 1 huruf untuk mencari nama..."
                            autocomplete="off"
                            required
                            autofocus>
                     
-                    <!-- Custom Dropdown -->
-                    <div id="student-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg hidden max-h-60 overflow-y-auto">
-                        <!-- Results will be populated here -->
+                    <!-- Check Icon (when selected) -->
+                    <div id="check-icon" class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none hidden">
+                        <i class="fas fa-check-circle text-green-500 text-2xl"></i>
                     </div>
                     
                     <!-- Loading indicator -->
                     <div id="loading-indicator" class="absolute right-4 top-1/2 transform -translate-y-1/2 hidden">
                         <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
                     </div>
+                    
+                    <!-- Custom Dropdown -->
+                    <div id="student-dropdown" class="absolute z-10 w-full mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg hidden max-h-60 overflow-y-auto">
+                        <!-- Results will be populated here -->
+                    </div>
                 </div>
+
                 @error('name')
                     <div class="mt-2 text-sm text-red-600 ml-4">
                         <i class="fas fa-exclamation-circle mr-2"></i>
                         {{ $message }}
                     </div>
                 @enderror
+
+                <!-- Selected Student Badge -->
+                <div id="selected-badge" class="hidden mt-3 p-4 bg-green-50 border-2 border-green-500 rounded-2xl">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-800 flex items-center">
+                                    <span id="selected-name"></span>
+                                    <span class="ml-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                                        <i class="fas fa-check mr-1"></i>
+                                        Terpilih
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600">
+                                    NIS: <span id="selected-nis"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <button 
+                            type="button"
+                            id="clear-selection"
+                            class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <p class="text-sm text-gray-500 ml-4">
                     <i class="fas fa-info-circle mr-2"></i>
                     Masukkan nama yang sudah terdaftar di sistem
@@ -68,7 +104,7 @@
                     <i class="fas fa-arrow-left mr-3"></i>
                     Kembali ke Beranda
                 </a>
-                <button type="submit" class="flex-1 inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <button type="submit" id="submit-btn" class="flex-1 inline-flex items-center justify-center px-6 py-4 bg-gray-400 text-white rounded-2xl font-semibold cursor-not-allowed transition-all duration-300" disabled>
                     <i class="fas fa-sign-in-alt mr-3"></i>
                     Absen Masuk
                 </button>
@@ -89,19 +125,19 @@
             <ul class="space-y-3 text-sm text-gray-600">
                 <li class="flex items-start">
                     <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</span>
-                    <span>Masukkan nama lengkap Anda di kolom input</span>
+                    <span>Ketik nama Anda di kolom pencarian</span>
                 </li>
                 <li class="flex items-start">
                     <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">2</span>
-                    <span>Klik tombol "Absen Masuk"</span>
+                    <span>Pilih nama dari dropdown yang muncul</span>
                 </li>
                 <li class="flex items-start">
                     <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">3</span>
-                    <span>Sistem akan memverifikasi data Anda</span>
+                    <span>Pastikan badge hijau "Terpilih" muncul</span>
                 </li>
                 <li class="flex items-start">
                     <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 mt-0.5">4</span>
-                    <span>Setelah berhasil, Anda dapat melihat koleksi buku</span>
+                    <span>Klik "Absen Masuk" untuk submit</span>
                 </li>
             </ul>
         </div>
@@ -125,7 +161,7 @@
                 </li>
                 <li class="flex items-start">
                     <i class="fas fa-check-circle text-green-500 mr-3 mt-0.5"></i>
-                    <span>Masukkan nama lengkap sesuai data siswa</span>
+                    <span>Pilih nama dari dropdown autocomplete</span>
                 </li>
                 <li class="flex items-start">
                     <i class="fas fa-check-circle text-green-500 mr-3 mt-0.5"></i>
@@ -165,9 +201,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const nameInput = document.getElementById('name');
     const dropdown = document.getElementById('student-dropdown');
     const loadingIndicator = document.getElementById('loading-indicator');
+    const checkIcon = document.getElementById('check-icon');
+    const selectedBadge = document.getElementById('selected-badge');
+    const selectedNameSpan = document.getElementById('selected-name');
+    const selectedNisSpan = document.getElementById('selected-nis');
+    const clearBtn = document.getElementById('clear-selection');
+    const submitBtn = document.getElementById('submit-btn');
+    
     let searchTimeout;
     let selectedIndex = -1;
     let students = [];
+    let isStudentSelected = false;
 
     // Function to show dropdown
     function showDropdown() {
@@ -179,6 +223,56 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdown.classList.add('hidden');
         selectedIndex = -1;
     }
+
+    // Function to mark student as selected
+    function markAsSelected(student) {
+        isStudentSelected = true;
+        
+        // Update input styling
+        nameInput.classList.add('border-green-500', 'bg-green-50');
+        nameInput.classList.remove('border-gray-200');
+        
+        // Show check icon
+        checkIcon.classList.remove('hidden');
+        
+        // Show selected badge
+        selectedBadge.classList.remove('hidden');
+        selectedNameSpan.textContent = student.name;
+        selectedNisSpan.textContent = student.nis;
+        
+        // Enable submit button
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        submitBtn.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800', 'shadow-lg', 'hover:shadow-xl');
+        
+        hideDropdown();
+    }
+
+    // Function to clear selection
+    function clearSelection() {
+        isStudentSelected = false;
+        nameInput.value = '';
+        
+        // Reset input styling
+        nameInput.classList.remove('border-green-500', 'bg-green-50');
+        nameInput.classList.add('border-gray-200');
+        
+        // Hide check icon
+        checkIcon.classList.add('hidden');
+        
+        // Hide selected badge
+        selectedBadge.classList.add('hidden');
+        
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+        submitBtn.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800', 'shadow-lg', 'hover:shadow-xl');
+        
+        nameInput.focus();
+    }
+
+    // Clear button event
+    clearBtn.addEventListener('click', clearSelection);
 
     // Function to search students
     function searchStudents(query) {
@@ -217,8 +311,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         dropdown.innerHTML = studentList.map((student, index) => `
-            <div class="student-item p-3 cursor-pointer hover:bg-blue-50 flex items-center transition-colors ${index === selectedIndex ? 'bg-blue-50' : ''}" 
-                 data-name="${student.name}" data-index="${index}">
+            <div class="student-item p-3 cursor-pointer hover:bg-blue-50 flex items-center transition-colors border-b border-gray-100 last:border-b-0 ${index === selectedIndex ? 'bg-blue-50' : ''}" 
+                 data-name="${student.name}" 
+                 data-nis="${student.nis}"
+                 data-index="${index}">
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
                     <i class="fas fa-user text-white text-sm"></i>
                 </div>
@@ -232,12 +328,12 @@ document.addEventListener('DOMContentLoaded', function() {
         showDropdown();
 
         // Add click event listeners to student items
-        dropdown.querySelectorAll('.student-item').forEach(item => {
+        dropdown.querySelectorAll('.student-item').forEach((item, idx) => {
             item.addEventListener('click', function() {
                 const studentName = this.getAttribute('data-name');
+                const studentNis = this.getAttribute('data-nis');
                 nameInput.value = studentName;
-                hideDropdown();
-                nameInput.focus();
+                markAsSelected({ name: studentName, nis: studentNis });
             });
         });
     }
@@ -246,15 +342,20 @@ document.addEventListener('DOMContentLoaded', function() {
     nameInput.addEventListener('input', function() {
         const query = this.value.trim();
         
+        // Clear selection if user types after selecting
+        if (isStudentSelected) {
+            clearSelection();
+        }
+        
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             searchStudents(query);
-        }, 300); // 300ms debounce
+        }, 300);
     });
 
     // Focus event listener
     nameInput.addEventListener('focus', function() {
-        if (this.value.trim().length >= 1) {
+        if (!isStudentSelected && this.value.trim().length >= 1) {
             searchStudents(this.value.trim());
         }
     });
@@ -272,8 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateSelection();
             } else if (e.key === 'Enter' && selectedIndex >= 0) {
                 e.preventDefault();
-                nameInput.value = students[selectedIndex].name;
-                hideDropdown();
+                const student = students[selectedIndex];
+                nameInput.value = student.name;
+                markAsSelected(student);
             } else if (e.key === 'Escape') {
                 hideDropdown();
             }
@@ -285,6 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdown.querySelectorAll('.student-item').forEach((item, index) => {
             if (index === selectedIndex) {
                 item.classList.add('bg-blue-50');
+                item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             } else {
                 item.classList.remove('bg-blue-50');
             }
@@ -298,11 +401,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Prevent form submission if no student is selected from dropdown
-    nameInput.closest('form').addEventListener('submit', function(e) {
-        const inputValue = nameInput.value.trim();
-        if (inputValue.length < 1) {
+    // Prevent form submission if no student is selected
+    document.getElementById('attendance-form').addEventListener('submit', function(e) {
+        if (!isStudentSelected) {
             e.preventDefault();
+            alert('Silakan pilih nama siswa dari dropdown yang muncul!');
             nameInput.focus();
             return false;
         }
